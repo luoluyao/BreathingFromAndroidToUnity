@@ -16,7 +16,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="1"/>
+        android:text="Step 1: Survival"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -26,7 +26,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="2"/>
+        android:text="Step 2: Relationships"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -36,7 +36,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="3"/>
+        android:text="Step 3: Self-love"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -46,7 +46,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="4"/>
+        android:text="Step 4: Healing"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -56,7 +56,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="5"/>
+        android:text="Step 5: Inspiration"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -66,7 +66,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="6"/>
+        android:text="Step 6: Compassion"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -76,7 +76,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="7"/>
+        android:text="Step 7: Service"/>
     </RelativeLayout>
   </ViewFlipper>
 
@@ -106,28 +106,28 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <TextView
-      android:id="@+id/textview_RMS"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="right"
-      android:text=""
-      android:textColor="@color/colorWhite"
-      android:visibility="gone"/>
+    <!--<TextView-->
+      <!--android:id="@+id/textview_RMS"-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:layout_gravity="center"-->
+      <!--android:text=""-->
+      <!--android:textColor="@color/colorWhite"-->
+      <!--android:visibility="gone"/>-->
 
-    <TextView
-      android:id="@+id/textview_breath"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="right"
-      android:text=""
-      android:textColor="@color/colorWhite"
-      android:visibility="gone"/>
+    <!--<TextView-->
+      <!--android:id="@+id/textview_breath"-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:layout_gravity="center"-->
+      <!--android:text=""-->
+      <!--android:textColor="@color/colorWhite"-->
+      <!--android:visibility="gone"/>-->
 
     <TextView
       android:id="@+id/start_breathing_text"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:layout_gravity="top"
       android:layout_margin="20dp"
       android:gravity="center"
@@ -139,7 +139,7 @@
     <TextView
       android:id="@+id/start_breathing__out_text"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="match_parent"
       android:layout_gravity="top"
       android:layout_margin="20dp"
       android:gravity="center"

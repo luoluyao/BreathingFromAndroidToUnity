@@ -16,7 +16,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="1"/>
+        android:text="Level 1: Survival"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -26,7 +26,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="2"/>
+        android:text="Level 2: Relationships"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -36,7 +36,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="3"/>
+        android:text="Level 3: Self-love"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -46,7 +46,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="4"/>
+        android:text="Level 4: Healing"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -56,7 +56,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="5"/>
+        android:text="Level 5: Inspiration"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -66,7 +66,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="6"/>
+        android:text="Level 6: Compassion"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -76,7 +76,7 @@
 
       <TextView
         style="@style/ImageTitle"
-        android:text="7"/>
+        android:text="Level 7: Service"/>
     </RelativeLayout>
   </ViewFlipper>
 
@@ -110,7 +110,7 @@
       android:id="@+id/textview_RMS"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"
+      android:layout_gravity="center"
       android:text=""
       android:textColor="@color/colorWhite"
       android:visibility="gone"/>
@@ -119,7 +119,7 @@
       android:id="@+id/textview_breath"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="right"
+      android:layout_gravity="center"
       android:text=""
       android:textColor="@color/colorWhite"
       android:visibility="gone"/>
