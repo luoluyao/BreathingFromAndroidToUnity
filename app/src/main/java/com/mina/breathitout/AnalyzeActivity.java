@@ -22,6 +22,8 @@
 package com.mina.breathitout;
 
 import android.Manifest;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -41,7 +43,9 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -69,6 +73,7 @@ public class AnalyzeActivity extends Activity {
   private ViewFlipper mViewFlipper;
   private Animation.AnimationListener mAnimationListener;
   private Context mContext;
+  ProgressBar progressBar;
 
   private Looper samplingThread;
 
@@ -108,6 +113,9 @@ public class AnalyzeActivity extends Activity {
           view.reset();
         }
       }
+      else {
+        animateProgressBar();
+      }
       isInhaling = !isInhaling;
       isInhalingSure = !isInhaling;
       Log.d("TIMER_ENDED", "timer: " + timerCounter);
@@ -132,6 +140,8 @@ public class AnalyzeActivity extends Activity {
 
     Resources res = getResources();
     getAudioSourceNameFromIdPrepare(res);
+
+    progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
     mContext = this;
     mViewFlipper = (ViewFlipper) this.findViewById(R.id.view_flipper);
@@ -167,6 +177,23 @@ public class AnalyzeActivity extends Activity {
     fadeOut.setDuration(4000);
     fadeOut.setFillAfter(true);
     fadeIn.setStartOffset(4200);
+  }
+
+  public void animateProgressBar() {
+    AnalyzeActivity.this.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        if(android.os.Build.VERSION.SDK_INT >= 11){
+          // will update the "progress" propriety of seekbar until it reaches progress
+          ObjectAnimator progressAnimation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), lastMaxTime);
+          progressAnimation.setDuration(1000); // 0.5 second
+          progressAnimation.setInterpolator(new DecelerateInterpolator());
+          progressAnimation.start();
+        }
+        else
+          progressBar.setProgress(timerCounter); // no animation on Gingerbread or lower
+      }
+    });
   }
 
   /**
@@ -312,15 +339,34 @@ public class AnalyzeActivity extends Activity {
       @Override
       public void run() {
         view.moveUP();
+        breathOutView.setVisibility(View.VISIBLE);
         AlphaAnimation fadeIn_breathout = new AlphaAnimation(0.0f , 1.0f ) ;
         fadeIn_breathout.setDuration(2000);
-        AlphaAnimation fadeOut_breathout = new AlphaAnimation( 1.0f , 0.0f ) ;
+        fadeIn_breathout.setAnimationListener(new Animation.AnimationListener() {
+          @Override
+          public void onAnimationStart(Animation animation) {
+
+          }
+
+          @Override
+          public void onAnimationEnd(Animation animation) {
+            AlphaAnimation fadeOut_breathout = new AlphaAnimation( 1.0f , 0.0f ) ;
+            breathOutView.startAnimation(fadeOut_breathout);
+            fadeOut_breathout.setDuration(2000);
+            breathOutView.setVisibility(View.INVISIBLE);
+          }
+
+          @Override
+          public void onAnimationRepeat(Animation animation) {
+
+          }
+        });
+
         breathOutView.startAnimation(fadeIn_breathout);
-        breathOutView.startAnimation(fadeOut_breathout);
         fadeIn_breathout.setFillAfter(true);
-        fadeOut_breathout.setDuration(4000);
-        fadeOut_breathout.setFillAfter(true);
-//        fadeIn_breathout.setStartOffset(200);
+//        fadeOut_breathout.setFillAfter(true);
+        animateProgressBar();
+//        fadeOut_breathout.setStartOffset(2000);
       }
     });
   }
@@ -333,6 +379,15 @@ public class AnalyzeActivity extends Activity {
         mViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext,R.anim.left_out));
         // controlling animation
         mViewFlipper.getInAnimation().setAnimationListener(mAnimationListener);
+        if(android.os.Build.VERSION.SDK_INT >= 11){
+          // will update the "progress" propriety of seekbar until it reaches progress
+          ObjectAnimator progressAnimation = ObjectAnimator.ofInt(progressBar, "progress", lastMaxTime, 0);
+          progressAnimation.setDuration(1000); // 0.5 second
+          progressAnimation.setInterpolator(new DecelerateInterpolator());
+          progressAnimation.start();
+        }
+        else
+          progressBar.setProgress(0); // no animation on Gingerbread or lower
         mViewFlipper.showNext();
       }
     });
@@ -530,10 +585,14 @@ public class AnalyzeActivity extends Activity {
           }
           if (isBreathing) {
             timerCounter++;
+//            if (isInhaling) {
+//              progressBar.setProgress(timerCounter);
+//            }
             if (timerCounter > 40) {
               if (isInhaling) {
                 if (!isInhalingSure) {
                   moveUp();
+//                  progressBar.setProgress(timerCounter);
                 }
                 isInhalingSure = true;
                 Log.d("Analyze", "moveUP");
