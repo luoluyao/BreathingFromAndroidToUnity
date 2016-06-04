@@ -94,7 +94,7 @@
       android:src="@drawable/sky"/>
   </RelativeLayout>
 
-  <LinearLayout
+  <RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -148,6 +148,6 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal"/>
 
-  </LinearLayout>
+  </RelativeLayout>
 
 </RelativeLayout>
