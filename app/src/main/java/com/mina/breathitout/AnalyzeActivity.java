@@ -82,6 +82,7 @@ public class AnalyzeActivity extends Activity {
   private static String wndFuncName;
 
   TextView txtView;
+  TextView breathOutView;
 
   private static int audioSourceId = RECORDER_AGC_OFF;
   private boolean isAWeighting = false;
@@ -137,6 +138,7 @@ public class AnalyzeActivity extends Activity {
 
     txtView = (TextView) this.findViewById(R.id.start_breathing_text);
     fadeInText();
+    breathOutView = (TextView) this.findViewById(R.id.start_breathing__out_text);
 
     //animation listener
     mAnimationListener = new Animation.AnimationListener() {
@@ -164,7 +166,7 @@ public class AnalyzeActivity extends Activity {
     fadeIn.setFillAfter(true);
     fadeOut.setDuration(4000);
     fadeOut.setFillAfter(true);
-//    fadeOut.setStartOffset(4200+fadeIn.getStartOffset());
+    fadeIn.setStartOffset(4200);
   }
 
   /**
@@ -310,6 +312,15 @@ public class AnalyzeActivity extends Activity {
       @Override
       public void run() {
         view.moveUP();
+        AlphaAnimation fadeIn_breathout = new AlphaAnimation(0.0f , 1.0f ) ;
+        fadeIn_breathout.setDuration(2000);
+        AlphaAnimation fadeOut_breathout = new AlphaAnimation( 1.0f , 0.0f ) ;
+        breathOutView.startAnimation(fadeIn_breathout);
+        breathOutView.startAnimation(fadeOut_breathout);
+        fadeIn_breathout.setFillAfter(true);
+        fadeOut_breathout.setDuration(4000);
+        fadeOut_breathout.setFillAfter(true);
+//        fadeIn_breathout.setStartOffset(200);
       }
     });
   }
@@ -348,13 +359,13 @@ public class AnalyzeActivity extends Activity {
   }
 
   private void refreshBreaths() {
-    TextView tv = (TextView) findViewById(R.id.textview_breath);
-    tv.setText("B: " + breathCount + " " + isInhaling + " " + lastMaxTime);
+//    TextView tv = (TextView) findViewById(R.id.textview_breath);
+//    tv.setText("B: " + breathCount + " " + isInhaling + " " + lastMaxTime);
   }
 
   private void refreshRMS() {
-    TextView tv = (TextView) findViewById(R.id.textview_RMS);
-    tv.setText("RMS: " + dtRMSFromFT_Log);
+//    TextView tv = (TextView) findViewById(R.id.textview_RMS);
+//    tv.setText("RMS: " + dtRMSFromFT_Log);
   }
   
   /**
