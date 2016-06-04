@@ -136,15 +136,30 @@
 
     <TextView
       android:id="@+id/textview_RMS"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="RMS"/>
+      android:text="RMS"
+      android:layout_gravity="right"
+      android:textColor="@color/colorWhite"
+      android:visibility="gone"/>
 
     <TextView
       android:id="@+id/textview_breath"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Breaths"
+      android:layout_gravity="right"
+      android:textColor="@color/colorWhite"
+      android:visibility="gone"/>
+
+    <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Breaths"/>
+      android:gravity="center"
+      android:id="@+id/start_breathing_text"
+      android:textColor="@color/colorWhite"
+      android:layout_gravity="top"
+      android:text="Take a deep breath in.."/>
 
     <LinearLayout
       android:id="@+id/container"

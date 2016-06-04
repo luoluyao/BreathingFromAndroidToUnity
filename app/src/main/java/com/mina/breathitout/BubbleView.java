@@ -20,6 +20,7 @@ public class BubbleView extends View {
   private static final int BLUE = 0xff8080FF;
   private static final int CYAN = 0xff80ffff;
   private static final int GREEN = 0xff80ff80;
+  int incrementY;
   int currentY;
   float diameter = 200f;
   public ShapeHolder newBall;
@@ -32,94 +33,34 @@ public class BubbleView extends View {
   @Override
   protected void onLayout(boolean changed, int l, int t, int r, int b) {
     super.onLayout(changed, l, t, r, b);
-    currentY = getHeight();
+    currentY = getHeight() - 150;
+    incrementY = getHeight()/8;
+    Log.d("incrementY", getHeight()+ " "+ incrementY);
     newBall = addBall(getWidth()/2, currentY); //height is ready
   }
 
-  public void resetBall() {
-    currentY = getHeight();
+  public void reset() {
+    currentY = getHeight() - 150;
     newBall = addBall(getWidth()/2, currentY);
   }
 
   public void moveUP() {
-    currentY = 100;
-    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", getHeight()-200, 100);
+    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", newBall.getY(), newBall.getY() - incrementY);
+    Log.d("incrementY", getHeight()+ " "+ incrementY);
     bounceAnim.setDuration(2500);
     AnimatorSet bouncer = new AnimatorSet();
     bouncer.play(bounceAnim);
     bouncer.start();
-//    Log.d("Bubble", "currentY: "+currentY);
-//    newBall = addBall(getWidth()/2, currentY);
   }
   public void moveDown() {
-    currentY += 100;
-    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", 100, getHeight()-200);
-    bounceAnim.setDuration(2500);
-    AnimatorSet bouncer = new AnimatorSet();
-    bouncer.play(bounceAnim);
-    bouncer.start();
+//    currentY += 100;
+//    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", 100, getHeight()-200);
+//    bounceAnim.setDuration(2500);
+//    AnimatorSet bouncer = new AnimatorSet();
+//    bouncer.play(bounceAnim);
+//    bouncer.start();
 //    Log.d("Bubble", "currentY: "+currentY);
 //    newBall = addBall(getWidth()/2, currentY);
-  }
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
-    if (event.getAction() != MotionEvent.ACTION_DOWN &&
-        event.getAction() != MotionEvent.ACTION_MOVE) {
-      return false;
-    }
-    moveUP();
-    // Bouncing animation with squash and stretch
-//    newBall = addBall(getWidth()/2, getHeight());
-//    float startY = newBall.getY();
-//    float endY = getHeight() - 50f;
-//    float h = (float)getHeight();
-//    float eventY = event.getY();
-//    int duration = (int)(500 * ((h - eventY)/h));
-//    bounceAnim.setInterpolator(new AccelerateInterpolator());
-//    ValueAnimator squashAnim1 = ObjectAnimator.ofFloat(newBall, "x", newBall.getX(),
-//        newBall.getX() - 25f);
-//    squashAnim1.setDuration(duration/4);
-//    squashAnim1.setRepeatCount(1);
-//    squashAnim1.setRepeatMode(ValueAnimator.REVERSE);
-//    squashAnim1.setInterpolator(new DecelerateInterpolator());
-//    ValueAnimator squashAnim2 = ObjectAnimator.ofFloat(newBall, "width", newBall.getWidth(),
-//        newBall.getWidth() + 50);
-//    squashAnim2.setDuration(duration/4);
-//    squashAnim2.setRepeatCount(1);
-//    squashAnim2.setRepeatMode(ValueAnimator.REVERSE);
-//    squashAnim2.setInterpolator(new DecelerateInterpolator());
-//    ValueAnimator stretchAnim1 = ObjectAnimator.ofFloat(newBall, "y", endY,
-//        endY + 25f);
-//    stretchAnim1.setDuration(duration/4);
-//    stretchAnim1.setRepeatCount(1);
-//    stretchAnim1.setInterpolator(new DecelerateInterpolator());
-//    stretchAnim1.setRepeatMode(ValueAnimator.REVERSE);
-//    ValueAnimator stretchAnim2 = ObjectAnimator.ofFloat(newBall, "height",
-//        newBall.getHeight(), newBall.getHeight() - 25);
-//    stretchAnim2.setDuration(duration/4);
-//    stretchAnim2.setRepeatCount(1);
-//    stretchAnim2.setInterpolator(new DecelerateInterpolator());
-//    stretchAnim2.setRepeatMode(ValueAnimator.REVERSE);
-//    ValueAnimator bounceBackAnim = ObjectAnimator.ofFloat(newBall, "y", endY,
-//        startY);
-//    bounceBackAnim.setDuration(duration);
-//    bounceBackAnim.setInterpolator(new DecelerateInterpolator());
-//    // Sequence the down/squash&stretch/up animations
-//    AnimatorSet bouncer = new AnimatorSet();
-//    bouncer.play(bounceAnim).before(squashAnim1);
-//    bouncer.play(squashAnim1).with(squashAnim2);
-//    bouncer.play(squashAnim1).with(stretchAnim1);
-//    bouncer.play(squashAnim1).with(stretchAnim2);
-//    bouncer.play(bounceBackAnim).after(stretchAnim2);
-//    // Fading animation - remove the ball when the animation is done
-//    ValueAnimator fadeAnim = ObjectAnimator.ofFloat(newBall, "alpha", 1f, 0f);
-//    fadeAnim.setDuration(250);
-//    // Sequence the two animations to play one after the other
-//    AnimatorSet animatorSet = new AnimatorSet();
-//    animatorSet.play(bouncer).before(fadeAnim);
-//    // Start the animation
-//    animatorSet.start();
-    return true;
   }
 
   private ShapeHolder addBall(float x, float y) {
@@ -148,10 +89,10 @@ public class BubbleView extends View {
     super.onDraw(canvas);
 //    canvas.save();
 
-    canvas.translate(newBall.getX() - 150, newBall.getY() - 100);
+    canvas.translate(newBall.getX() - 150, newBall.getY());
     cloud.setBounds(0, 0 , 500, 350);
     cloud.draw(canvas);
-    Log.d("Bubble", "get Y: "+ newBall.getY());
+//    Log.d("Bubble", "get Y: "+ newBall.getY());
 //    newBall.getShape().draw(canvas);
 //    canvas.restore();
   }

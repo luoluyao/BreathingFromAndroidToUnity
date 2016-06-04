@@ -38,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
@@ -80,6 +81,8 @@ public class AnalyzeActivity extends Activity {
   private static int nFFTAverage = 1;
   private static String wndFuncName;
 
+  TextView txtView;
+
   private static int audioSourceId = RECORDER_AGC_OFF;
   private boolean isAWeighting = false;
   private BubbleView view;
@@ -100,6 +103,9 @@ public class AnalyzeActivity extends Activity {
       if (!isInhaling) {
         breathCount++;
         moveRight();
+        if (breathCount == 7) {
+          view.reset();
+        }
       }
       isInhaling = !isInhaling;
       isInhalingSure = !isInhaling;
@@ -129,6 +135,9 @@ public class AnalyzeActivity extends Activity {
     mContext = this;
     mViewFlipper = (ViewFlipper) this.findViewById(R.id.view_flipper);
 
+    txtView = (TextView) this.findViewById(R.id.start_breathing_text);
+    fadeInText();
+
     //animation listener
     mAnimationListener = new Animation.AnimationListener() {
       public void onAnimationStart(Animation animation) {
@@ -141,8 +150,21 @@ public class AnalyzeActivity extends Activity {
       public void onAnimationEnd(Animation animation) {
         //TODO animation stopped event
         moveDown();
+        fadeInText();
       }
     };
+  }
+
+  public void fadeInText() {
+    AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
+    AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
+    txtView.startAnimation(fadeIn);
+    txtView.startAnimation(fadeOut);
+    fadeIn.setDuration(4000);
+    fadeIn.setFillAfter(true);
+    fadeOut.setDuration(4000);
+    fadeOut.setFillAfter(true);
+//    fadeOut.setStartOffset(4200+fadeIn.getStartOffset());
   }
 
   /**
