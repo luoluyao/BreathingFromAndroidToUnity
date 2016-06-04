@@ -22,7 +22,7 @@ public class BubbleView extends View {
   float diameter = 200f;
   public ShapeHolder newBall;
   AnimatorSet animation = null;
-  public AnimationDrawable cloud;
+  public Drawable cloud;
   AnimatorSet bouncer1;
   public BubbleView(Context context) {
     super(context);
@@ -77,8 +77,7 @@ public class BubbleView extends View {
   private ShapeHolder addBall(float x, float y) {
     OvalShape circle = new OvalShape();
     circle.resize(diameter, diameter);
-    cloud = (AnimationDrawable) getResources().getDrawable(R.drawable.floating_animation);
-    cloud.start();
+    cloud =  getResources().getDrawable(R.drawable.yogi);
     ShapeDrawable drawable = new ShapeDrawable(circle);
     ShapeHolder shapeHolder = new ShapeHolder(drawable);
     shapeHolder.setX(x - diameter/2f);
