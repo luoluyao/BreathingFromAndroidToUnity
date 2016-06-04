@@ -13,7 +13,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorYellow">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="1"/>
@@ -23,7 +30,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorPeach">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="2"/>
@@ -33,7 +47,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorPink">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="3"/>
@@ -43,7 +64,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorPurple">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="4"/>
@@ -53,7 +81,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorlighBlue">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="5"/>
@@ -63,7 +98,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorLightGreen">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="6"/>
@@ -73,7 +115,14 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:background="@color/colorCucumber">
-
+      <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sky"
+        android:alpha="0.5"/>
       <TextView
         style="@style/ImageTitle"
         android:text="7"/>
