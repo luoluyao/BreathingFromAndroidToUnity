@@ -23,6 +23,7 @@ package com.mina.breathitout;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -37,8 +38,11 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.mina.breathitout.math.DoubleSineGen;
 import com.mina.breathitout.math.STFT;
@@ -59,6 +63,11 @@ public class AnalyzeActivity extends Activity {
   int thresholdAmpDB = -50;
   int timerCounter = 0;
   int lastMaxTime = 0;
+  boolean isInhalingSure = false;
+
+  private ViewFlipper mViewFlipper;
+  private Animation.AnimationListener mAnimationListener;
+  private Context mContext;
 
   private Looper samplingThread;
 
@@ -90,10 +99,10 @@ public class AnalyzeActivity extends Activity {
     if (timerCounter > 40) {
       if (!isInhaling) {
         breathCount++;
-        view.resetBall();
-        view.invalidate();
+        moveRight();
       }
       isInhaling = !isInhaling;
+      isInhalingSure = !isInhaling;
       Log.d("TIMER_ENDED", "timer: " + timerCounter);
       lastMaxTime = timerCounter;
     }
@@ -117,6 +126,23 @@ public class AnalyzeActivity extends Activity {
     Resources res = getResources();
     getAudioSourceNameFromIdPrepare(res);
 
+    mContext = this;
+    mViewFlipper = (ViewFlipper) this.findViewById(R.id.view_flipper);
+
+    //animation listener
+    mAnimationListener = new Animation.AnimationListener() {
+      public void onAnimationStart(Animation animation) {
+        //animation started event
+      }
+
+      public void onAnimationRepeat(Animation animation) {
+      }
+
+      public void onAnimationEnd(Animation animation) {
+        //TODO animation stopped event
+        moveDown();
+      }
+    };
   }
 
   /**
@@ -253,6 +279,37 @@ public class AnalyzeActivity extends Activity {
         refreshBreaths();
         refreshRMS();
         view.invalidate();
+      }
+    });
+  }
+
+  private void moveUp() {
+    AnalyzeActivity.this.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        view.moveUP();
+      }
+    });
+  }
+
+  private void moveRight() {
+    AnalyzeActivity.this.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        mViewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.left_in));
+        mViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext,R.anim.left_out));
+        // controlling animation
+        mViewFlipper.getInAnimation().setAnimationListener(mAnimationListener);
+        mViewFlipper.showNext();
+      }
+    });
+  }
+
+  private void moveDown() {
+    AnalyzeActivity.this.runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        view.moveDown();
       }
     });
   }
@@ -442,11 +499,13 @@ public class AnalyzeActivity extends Activity {
             timerCounter++;
             if (timerCounter > 40) {
               if (isInhaling) {
-                view.moveUP();
+                if (!isInhalingSure) {
+                  moveUp();
+                }
+                isInhalingSure = true;
                 Log.d("Analyze", "moveUP");
               } else {
-                view.moveDown();
-                Log.d("Analyze", "moveDown");
+                Log.d("Analyze", "moveRight");
               }
             }
           }

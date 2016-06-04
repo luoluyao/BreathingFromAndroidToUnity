@@ -1,29 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
 
-  <TextView
-    android:id="@+id/textview_RMS"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="RMS"/>
+  <ViewFlipper
+    android:id="@+id/view_flipper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-  <TextView
-    android:id="@+id/textview_breath"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Breaths"/>
-  <Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/test"
-    android:text="test"/>
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorYellow">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="1"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorPeach">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="2"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorPink">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="3"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorPurple">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="4"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorlighBlue">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="5"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorLightGreen">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="6"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:background="@color/colorCucumber">
+
+      <TextView
+        style="@style/ImageTitle"
+        android:text="7"/>
+    </RelativeLayout>
+  </ViewFlipper>
+
   <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:id="@+id/container"/>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-</LinearLayout>
+    <TextView
+      android:id="@+id/textview_RMS"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="RMS"/>
+
+    <TextView
+      android:id="@+id/textview_breath"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Breaths"/>
+
+    <LinearLayout
+      android:id="@+id/container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"/>
+
+  </LinearLayout>
+
+</RelativeLayout>

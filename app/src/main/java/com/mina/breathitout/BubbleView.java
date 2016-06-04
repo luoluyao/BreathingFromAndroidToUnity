@@ -30,16 +30,6 @@ public class BubbleView extends View {
   AnimatorSet animation = null;
   public BubbleView(Context context) {
     super(context);
-    // Animate background color
-    // Note that setting the background color will automatically invalidate the
-    // view, so that the animated color, and the bouncing balls, get redisplayed on
-    // every frame of the animation.
-//    ValueAnimator colorAnim = ObjectAnimator.ofInt(this, "backgroundColor", CYAN, BLUE);
-//    colorAnim.setDuration(3000);
-//    colorAnim.setEvaluator(new ArgbEvaluator());
-//    colorAnim.setRepeatCount(ValueAnimator.INFINITE);
-//    colorAnim.setRepeatMode(ValueAnimator.REVERSE);
-//    colorAnim.start();
   }
 
   @Override
@@ -56,13 +46,23 @@ public class BubbleView extends View {
 
   public void moveUP() {
     currentY = 100;
-    Log.d("Bubble", "currentY: "+currentY);
-    newBall = addBall(getWidth()/2, currentY);
+    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", getHeight()-diameter, 0);
+    bounceAnim.setDuration(2500);
+    AnimatorSet bouncer = new AnimatorSet();
+    bouncer.play(bounceAnim);
+    bouncer.start();
+//    Log.d("Bubble", "currentY: "+currentY);
+//    newBall = addBall(getWidth()/2, currentY);
   }
   public void moveDown() {
     currentY += 100;
-    Log.d("Bubble", "currentY: "+currentY);
-    newBall = addBall(getWidth()/2, currentY);
+    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", 0, getHeight()-diameter);
+    bounceAnim.setDuration(2500);
+    AnimatorSet bouncer = new AnimatorSet();
+    bouncer.play(bounceAnim);
+    bouncer.start();
+//    Log.d("Bubble", "currentY: "+currentY);
+//    newBall = addBall(getWidth()/2, currentY);
   }
   @Override
   public boolean onTouchEvent(MotionEvent event) {
@@ -78,8 +78,6 @@ public class BubbleView extends View {
 //    float h = (float)getHeight();
 //    float eventY = event.getY();
 //    int duration = (int)(500 * ((h - eventY)/h));
-//    ValueAnimator bounceAnim = ObjectAnimator.ofFloat(newBall, "y", startY, endY);
-//    bounceAnim.setDuration(duration);
 //    bounceAnim.setInterpolator(new AccelerateInterpolator());
 //    ValueAnimator squashAnim1 = ObjectAnimator.ofFloat(newBall, "x", newBall.getX(),
 //        newBall.getX() - 25f);
