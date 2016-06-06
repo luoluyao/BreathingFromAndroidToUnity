@@ -22,7 +22,6 @@
 package com.mina.breathitout;
 
 import android.Manifest;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -33,7 +32,6 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -364,9 +362,7 @@ public class AnalyzeActivity extends Activity {
 
         breathOutView.startAnimation(fadeIn_breathout);
         fadeIn_breathout.setFillAfter(true);
-//        fadeOut_breathout.setFillAfter(true);
         animateProgressBar();
-//        fadeOut_breathout.setStartOffset(2000);
       }
     });
   }
@@ -604,16 +600,6 @@ public class AnalyzeActivity extends Activity {
           if (isBreathing && dtRMSFromFT_Log < thresholdAmpDB) {
             stopBreathing();
           }
-//          Log.d("BREATHE", "spectrumDB: "+spectrumDB.toString());
-//          Log.d("BREATHE", "maxAmpFreq: "+maxAmpFreq);
-//          Log.d("BREATHE", "maxAmpDB: "+maxAmpDB);
-//          Log.d("BREATHE", "dtRMS: "+dtRMS);
-//          Log.d("BREATHE", "dtRMSFromFT: "+dtRMSFromFT);
-//          Log.d("BREATHE", "dtRMSFromFT_Log: " + dtRMSFromFT_Log);
-//          Log.d("BREATHE", "isBreathing: " + isBreathing);
-//          Log.d("BREATHE", "isInhaling: " + isInhaling);
-//          Log.d("BREATHE", "breathCount: " + breathCount);
-//          Log.d("BREATHE", "timerCounter: " + timerCounter / 44000f);
           update();
         }
       }
@@ -627,9 +613,5 @@ public class AnalyzeActivity extends Activity {
       isRunning = false;
       interrupt();
     }
-  }
-
-  private void vibrate(int ms) {
-    //((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(ms);
   }
 }

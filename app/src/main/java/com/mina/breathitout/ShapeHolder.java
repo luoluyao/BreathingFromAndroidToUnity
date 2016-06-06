@@ -15,10 +15,11 @@ package com.mina.breathitout;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-    import android.graphics.Paint;
-    import android.graphics.RadialGradient;
-    import android.graphics.drawable.ShapeDrawable;
-    import android.graphics.drawable.shapes.Shape;
+
+import android.graphics.Paint;
+import android.graphics.RadialGradient;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 
 /**
  * A data structure that holds a Shape and various properties that can be used to define
