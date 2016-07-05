@@ -49,6 +49,7 @@ import android.widget.ViewFlipper;
 
 import com.mina.breathitout.math.DoubleSineGen;
 import com.mina.breathitout.math.STFT;
+import com.unity3d.player.UnityPlayer;
 
 import java.util.Arrays;
 
@@ -58,7 +59,7 @@ import java.util.Arrays;
  * @author suhler@google.com (Stephen Uhler)
  */
 
-public class AnalyzeActivity extends Activity {
+public class AnalyzeActivity {
   static final String TAG = "AnalyzeActivity";
   boolean isBreathing;
   int breathCount = 0;
@@ -68,10 +69,8 @@ public class AnalyzeActivity extends Activity {
   int lastMaxTime = 0;
   boolean isInhalingSure = false;
 
-  private ViewFlipper mViewFlipper;
-  private Animation.AnimationListener mAnimationListener;
   private Context mContext;
-  ProgressBar progressBar;
+  private static AnalyzeActivity instance;
 
   private Looper samplingThread;
 
@@ -84,18 +83,14 @@ public class AnalyzeActivity extends Activity {
   private static int nFFTAverage = 1;
   private static String wndFuncName;
 
-  TextView txtView;
-  TextView breathOutView;
-
-  private static int audioSourceId = RECORDER_AGC_OFF;
-  private boolean isAWeighting = false;
-  private BubbleView view;
-
   double dtRMS = 0;
   double dtRMSFromFT = 0;
   double maxAmpDB;
   double maxAmpFreq;
   double dtRMSFromFT_Log;
+
+  private static int audioSourceId = RECORDER_AGC_OFF;
+  private boolean isAWeighting = false;
 
   private void startBreathing() {
     isBreathing = true;
@@ -103,17 +98,13 @@ public class AnalyzeActivity extends Activity {
 
   private void stopBreathing() {
     isBreathing = false;
-    if (timerCounter > 40) {
-      if (!isInhaling) {
-        breathCount++;
-        moveRight();
-        if (breathCount == 7) {
-          view.reset();
-        }
-      }
-      else {
-        animateProgressBar();
-      }
+    if (timerCounter > 20) {
+//      sendMessageIsBreathing();
+//      if (!isInhaling) {
+//        breathCount++;
+//      }
+//      else {
+//      }
       isInhaling = !isInhaling;
       isInhalingSure = !isInhaling;
       Log.d("TIMER_ENDED", "timer: " + timerCounter);
@@ -123,186 +114,41 @@ public class AnalyzeActivity extends Activity {
   }
 
 
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
-    requestMicPermission();
-    view = new BubbleView(this);
-    LinearLayout container = (LinearLayout) findViewById(R.id.container);
-    container.addView(view);
+  public AnalyzeActivity(Context context) {
+    this.instance = this;
+    this.mContext = context;
 
     final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     Log.i(TAG, " max mem = " + maxMemory + "k");
 
-    Resources res = getResources();
-    getAudioSourceNameFromIdPrepare(res);
+    getAudioSourceNameFromIdPrepare();
 
-    progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+    audioSourceId = 0;
+    wndFuncName = "Hanning";
 
-    mContext = this;
-    mViewFlipper = (ViewFlipper) this.findViewById(R.id.view_flipper);
-
-    txtView = (TextView) this.findViewById(R.id.start_breathing_text);
-    fadeInText();
-    breathOutView = (TextView) this.findViewById(R.id.start_breathing__out_text);
-
-    //animation listener
-    mAnimationListener = new Animation.AnimationListener() {
-      public void onAnimationStart(Animation animation) {
-        //animation started event
-      }
-
-      public void onAnimationRepeat(Animation animation) {
-      }
-
-      public void onAnimationEnd(Animation animation) {
-        //TODO animation stopped event
-        moveDown();
-        fadeInText();
-      }
-    };
-  }
-
-  public void fadeInText() {
-    AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
-    AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
-    txtView.startAnimation(fadeIn);
-    txtView.startAnimation(fadeOut);
-    fadeIn.setDuration(4000);
-    fadeIn.setFillAfter(true);
-    fadeOut.setDuration(4000);
-    fadeOut.setFillAfter(true);
-    fadeIn.setStartOffset(4200);
-  }
-
-  public void animateProgressBar() {
-    AnalyzeActivity.this.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if(android.os.Build.VERSION.SDK_INT >= 11){
-          // will update the "progress" propriety of seekbar until it reaches progress
-          ObjectAnimator progressAnimation = ObjectAnimator.ofInt(progressBar, "progress", progressBar.getProgress(), lastMaxTime);
-          progressAnimation.setDuration(1000); // 0.5 second
-          progressAnimation.setInterpolator(new DecelerateInterpolator());
-          progressAnimation.start();
-        }
-        else
-          progressBar.setProgress(timerCounter); // no animation on Gingerbread or lower
-      }
-    });
-  }
-
-  /**
-   * Run processClick() for views, transferring the state in the textView to our
-   * internal state, then begin sampling and processing audio data
-   */
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-
-    // load preferences
-    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-    boolean keepScreenOn = sharedPref.getBoolean("keepScreenOn", true);
-    if (keepScreenOn) {
-      getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    } else {
-      getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    audioSourceId = Integer.parseInt(sharedPref.getString("audioSource", Integer.toString(RECORDER_AGC_OFF)));
-    wndFuncName = sharedPref.getString("windowFunction", "Hanning");
-
+    UnityPlayer.UnitySendMessage("Listener", "receiveAlpha", "starting sampling");
     samplingThread = new Looper();
     samplingThread.start();
   }
 
-  @Override
-  protected void onPause() {
-    super.onPause();
-    samplingThread.finish();
-    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-  }
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-  }
-
-  @Override
-  public void onSaveInstanceState(Bundle savedInstanceState) {
-    savedInstanceState.putDouble("dtRMS", dtRMS);
-    savedInstanceState.putDouble("dtRMSFromFT", dtRMSFromFT);
-    savedInstanceState.putDouble("maxAmpDB", maxAmpDB);
-    savedInstanceState.putDouble("maxAmpFreq", maxAmpFreq);
-    savedInstanceState.putDouble("dtRMSFromFT_Log", dtRMSFromFT_Log);
-    savedInstanceState.putInt("breathCount", breathCount);
-    savedInstanceState.putBoolean("isBreathing", isBreathing);
-    savedInstanceState.putBoolean("isInhaling", isInhaling);
-    savedInstanceState.putInt("lastMaxTime", lastMaxTime);
-
-    super.onSaveInstanceState(savedInstanceState);
-  }
-
-  @Override
-  public void onRestoreInstanceState(Bundle savedInstanceState) {
-    // will be calls after the onStart()
-    super.onRestoreInstanceState(savedInstanceState);
-
-    dtRMS = savedInstanceState.getDouble("dtRMS");
-    dtRMSFromFT = savedInstanceState.getDouble("dtRMSFromFT");
-    dtRMSFromFT_Log = savedInstanceState.getDouble("dtRMSFromFT_Log");
-    maxAmpDB = savedInstanceState.getDouble("maxAmpDB");
-    maxAmpFreq = savedInstanceState.getDouble("maxAmpFreq");
-    breathCount = savedInstanceState.getInt("breathCount");
-    isBreathing = savedInstanceState.getBoolean("isBreathing");
-    isInhaling = savedInstanceState.getBoolean("isInhaling");
-    lastMaxTime = savedInstanceState.getInt("lastMaxTime");
-  }
-
-  /**
-   * Read a snapshot of audio data at a regular interval, and compute the FFT
-   *
-   * @author suhler@google.com
-   */
-
-  private void requestMicPermission() {
-    // Here, thisActivity is the current activity
-    if (ContextCompat.checkSelfPermission(this,
-        Manifest.permission.RECORD_AUDIO)
-        != PackageManager.PERMISSION_GRANTED) {
-
-      // Should we show an explanation?
-      if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-          Manifest.permission.RECORD_AUDIO)) {
-
-        // Show an expanation to the user *asynchronously* -- don't block
-        // this thread waiting for the user's response! After the user
-        // sees the explanation, try again to request the permission.
-
-      } else {
-
-        // No explanation needed, we can request the permission.
-
-        ActivityCompat.requestPermissions(this,
-            new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-            0);
-
-        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-        // app-defined int constant. The callback method gets the
-        // result of the request.
-      }
+  public static AnalyzeActivity getInstance(Context context) {
+    if(instance == null) {
+      instance = new AnalyzeActivity(context);
     }
+    return instance;
   }
 
-  static String[] audioSourceNames;
+  protected void destroy() {
+    samplingThread.finish();
+  }
+
+  static String[] audioSourceNames = {"VOICE_RECOGNITION", "DEFAULT", "MIC", "VOICE_UPLINK",
+      "VOICE_DOWNLINK", "VOICE_CALL", "CAMCORDER", "test signal 1\n\t 440Hz @ -6dB",
+      "test signal 2\n\t 625Hz @ -6dB\n +1875Hz @ -12dB", "white noise"};
   static int[] audioSourceIDs;
 
-  private void getAudioSourceNameFromIdPrepare(Resources res) {
-    audioSourceNames = res.getStringArray(R.array.audio_source);
-    String[] sasid = res.getStringArray(R.array.audio_source_id);
+  private void getAudioSourceNameFromIdPrepare() {
+    String[] sasid = {"6", "0", "1", "2", "3", "4", "5", "1000", "1001", "1002"};
     audioSourceIDs = new int[audioSourceNames.length];
     for (int i = 0; i < audioSourceNames.length; i++) {
       audioSourceIDs[i] = Integer.parseInt(sasid[i]);
@@ -322,103 +168,9 @@ public class AnalyzeActivity extends Activity {
   }
 
   private void update() {
-    AnalyzeActivity.this.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        refreshBreaths();
-        refreshRMS();
-        view.invalidate();
-      }
-    });
+
   }
 
-  private void moveUp() {
-    AnalyzeActivity.this.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        view.moveUP();
-        breathOutView.setVisibility(View.VISIBLE);
-        AlphaAnimation fadeIn_breathout = new AlphaAnimation(0.0f , 1.0f ) ;
-        fadeIn_breathout.setDuration(2000);
-        fadeIn_breathout.setAnimationListener(new Animation.AnimationListener() {
-          @Override
-          public void onAnimationStart(Animation animation) {
-
-          }
-
-          @Override
-          public void onAnimationEnd(Animation animation) {
-            AlphaAnimation fadeOut_breathout = new AlphaAnimation( 1.0f , 0.0f ) ;
-            breathOutView.startAnimation(fadeOut_breathout);
-            fadeOut_breathout.setDuration(2000);
-            breathOutView.setVisibility(View.INVISIBLE);
-          }
-
-          @Override
-          public void onAnimationRepeat(Animation animation) {
-
-          }
-        });
-
-        breathOutView.startAnimation(fadeIn_breathout);
-        fadeIn_breathout.setFillAfter(true);
-        animateProgressBar();
-      }
-    });
-  }
-
-  private void moveRight() {
-    AnalyzeActivity.this.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        mViewFlipper.setInAnimation(AnimationUtils.loadAnimation(mContext, R.anim.left_in));
-        mViewFlipper.setOutAnimation(AnimationUtils.loadAnimation(mContext,R.anim.left_out));
-        // controlling animation
-        mViewFlipper.getInAnimation().setAnimationListener(mAnimationListener);
-        if(android.os.Build.VERSION.SDK_INT >= 11){
-          // will update the "progress" propriety of seekbar until it reaches progress
-          ObjectAnimator progressAnimation = ObjectAnimator.ofInt(progressBar, "progress", lastMaxTime, 0);
-          progressAnimation.setDuration(1000); // 0.5 second
-          progressAnimation.setInterpolator(new DecelerateInterpolator());
-          progressAnimation.start();
-        }
-        else
-          progressBar.setProgress(0); // no animation on Gingerbread or lower
-        mViewFlipper.showNext();
-      }
-    });
-  }
-
-  private void moveDown() {
-    AnalyzeActivity.this.runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        view.moveDown();
-      }
-    });
-  }
-
-  private void refresh() {
-    samplingThread.finish();
-    try {
-      samplingThread.join();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    samplingThread = new Looper();
-    samplingThread.start();
-  }
-
-  private void refreshBreaths() {
-//    TextView tv = (TextView) findViewById(R.id.textview_breath);
-//    tv.setText("B: " + breathCount + " " + isInhaling + " " + lastMaxTime);
-  }
-
-  private void refreshRMS() {
-//    TextView tv = (TextView) findViewById(R.id.textview_RMS);
-//    tv.setText("RMS: " + dtRMSFromFT_Log);
-  }
-  
   /**
    * Read a snapshot of audio data at a regular interval, and compute the FFT
    *
@@ -426,6 +178,11 @@ public class AnalyzeActivity extends Activity {
    * bewantbe@gmail.com
    */
   double[] spectrumDBcopy;   // XXX, transfers data from Looper to AnalyzeView
+
+  public void sendMessageIsBreathing(String value){
+//    UnityPlayer.UnitySendMessage("Listener", "receiveAlpha", ""+breathCount);
+    UnityPlayer.UnitySendMessage("Listener", "receiveAlpha", value);
+  }
 
   public class Looper extends Thread {
     AudioRecord record;
@@ -438,12 +195,12 @@ public class AnalyzeActivity extends Activity {
 
     public Looper() {
       // Signal sources for testing
-      double fq0 = Double.parseDouble(getString(R.string.test_signal_1_freq1));
-      double amp0 = Math.pow(10, 1 / 20.0 * Double.parseDouble(getString(R.string.test_signal_1_db1)));
-      double fq1 = Double.parseDouble(getString(R.string.test_signal_2_freq1));
-      double fq2 = Double.parseDouble(getString(R.string.test_signal_2_freq2));
-      double amp1 = Math.pow(10, 1 / 20.0 * Double.parseDouble(getString(R.string.test_signal_2_db1)));
-      double amp2 = Math.pow(10, 1 / 20.0 * Double.parseDouble(getString(R.string.test_signal_2_db2)));
+      double fq0 = 440.0;
+      double amp0 = Math.pow(10, 1 / 20.0 * -6.0);
+      double fq1 = 625.0;
+      double fq2 = 1875.0;
+      double amp1 = Math.pow(10, 1 / 20.0 * -6.0);
+      double amp2 = Math.pow(10, 1 / 20.0 * -12.0);
       if (audioSourceId == 1000) {
         sineGen1 = new DoubleSineGen(fq0, sampleRate, SAMPLE_VALUE_MAX * amp0);
       } else {
@@ -576,6 +333,7 @@ public class AnalyzeActivity extends Activity {
           dtRMS = stft.getRMS();
           dtRMSFromFT = stft.getRMSFromFT();
           dtRMSFromFT_Log = 20 * Math.log10(dtRMSFromFT);
+          sendMessageIsBreathing(""+dtRMSFromFT_Log);
           if (!isBreathing && dtRMSFromFT_Log > thresholdAmpDB) {
             startBreathing();
           }
@@ -584,17 +342,18 @@ public class AnalyzeActivity extends Activity {
 //            if (isInhaling) {
 //              progressBar.setProgress(timerCounter);
 //            }
-            if (timerCounter > 40) {
-              if (isInhaling) {
-                if (!isInhalingSure) {
-                  moveUp();
-//                  progressBar.setProgress(timerCounter);
-                }
-                isInhalingSure = true;
-                Log.d("Analyze", "moveUP");
-              } else {
-                Log.d("Analyze", "moveRight");
-              }
+            if (timerCounter > 20) {
+//              sendMessageIsBreathing();
+//              if (isInhaling) {
+//                if (!isInhalingSure) {
+//                  moveUp();
+////                  progressBar.setProgress(timerCounter);
+//                }
+//                isInhalingSure = true;
+//                Log.d("Analyze", "moveUP");
+//              } else {
+//                Log.d("Analyze", "moveRight");
+//              }
             }
           }
           if (isBreathing && dtRMSFromFT_Log < thresholdAmpDB) {
